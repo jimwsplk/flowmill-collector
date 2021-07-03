@@ -289,6 +289,18 @@ void KernelCollector::probe_holdoff_timeout(uv_timer_t *timer)
   try {
     bpf_handler_.emplace(loop_, full_program_, enable_http_metrics_, enable_userland_tcp_, bpf_dump_file_, log_, encoder_.get());
     writer_.bpf_compiled();
+
+    constexpr u32 num1 = 7;
+    constexpr u64 num2 = 4UL  * 1024 * 1024 * 1024 + 1;
+    constexpr std::string_view str1 = "test string 1";
+    constexpr std::string_view str2 = "test string 2";
+    writer_.test_msg(num1, num2, jb_blob{str1}, jb_blob{str2});
+    LOG::info("sent test_msg from {}:"
+              "\n==============================\n"
+              "num1: {} num2: {} str1: {} str2: {}"
+              "\n==============================",
+              __func__, num1, num2, str1, str2
+    );
   } catch (std::exception &e) {
     print_troubleshooting_message_and_exit(log_,
                                            host_info_,
