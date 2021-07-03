@@ -259,6 +259,12 @@ private:
                        jb_agent_internal__pid_info &msg);
 
   /**
+   * Handler for new process timing
+   */
+  void handle_pid_info_timing(message_metadata const &metadata,
+                              jb_agent_internal__pid_info_timing &msg);
+
+  /**
    * Handler for close process
    */
   void handle_pid_close(message_metadata const &metadata,

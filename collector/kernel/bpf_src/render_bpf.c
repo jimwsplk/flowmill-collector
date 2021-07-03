@@ -554,6 +554,8 @@ int on_set_task_comm(struct pt_regs *ctx, struct task_struct *tsk,
 // start
 int on_wake_up_new_task(struct pt_regs *ctx, struct task_struct *tsk)
 {
+  u64 start = get_timestamp();
+
   int ret;
 
   pid_t tgid=0;
@@ -579,8 +581,12 @@ int on_wake_up_new_task(struct pt_regs *ctx, struct task_struct *tsk)
     return 0;
   }
 
+  u64 bpf_probe_duration_ns = get_timestamp() - start;
+  start = get_timestamp();
   perf_submit_agent_internal__pid_info(ctx, now, tgid, comm, cgroup,
                                        parent_tgid);
+  u64 perf_submit_duration_ns = get_timestamp() - start;
+  perf_submit_agent_internal__pid_info_timing(ctx, now, tgid, bpf_probe_duration_ns, perf_submit_duration_ns);
 
   return 0;
 }

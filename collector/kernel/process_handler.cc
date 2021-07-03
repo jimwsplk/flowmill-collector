@@ -136,6 +136,14 @@ void ProcessHandler::on_new_process(
   }
 }
 
+void ProcessHandler::on_new_process_timing(
+  std::chrono::nanoseconds timestamp,
+  struct jb_agent_internal__pid_info_timing const &msg
+) {
+    LOG::info("ProcessHandler::{}: timestamp={} pid={} bpf_probe_duration_ns={} perf_submit_agent_internal_duration_ns={}",
+              __func__, timestamp, msg.pid, msg.bpf_probe_duration_ns, msg.perf_submit_agent_internal_duration_ns);
+}
+
 void ProcessHandler::on_process_end(
   std::chrono::nanoseconds timestamp,
   struct jb_agent_internal__pid_close const &msg

@@ -113,6 +113,7 @@ BufferedPoller::BufferedPoller(
     add_handler<udp_stats_message_metadata,
                 &BufferedPoller::handle_udp_stats>();
     add_handler<pid_info_message_metadata, &BufferedPoller::handle_pid_info>();
+    add_handler<pid_info_timing_message_metadata, &BufferedPoller::handle_pid_info_timing>();
     add_handler<pid_close_message_metadata,
                 &BufferedPoller::handle_pid_close>();
     add_handler<pid_set_comm_message_metadata,
@@ -1055,6 +1056,14 @@ void BufferedPoller::handle_udp_stats(message_metadata const &metadata,
                 (msg.is_rx ? "RX" : "TX"), msg.sk, pos.index, laddr_s,
                 ntohs(msg.lport), raddr_s, ntohs(msg.rport), msg.packets,
                 msg.bytes, int(msg.changed_af), int(msg.drops));
+}
+
+void BufferedPoller::handle_pid_info_timing(message_metadata const &metadata,
+                                     jb_agent_internal__pid_info_timing &msg) {
+    LOG::info("BufferedPoller::{}: received msg from BPF probe: timestamp={} pid={} bpf_probe_duration_ns={} perf_submit_agent_internal_duration_ns={}",
+              __func__, metadata.timestamp, msg.pid, msg.bpf_probe_duration_ns, msg.perf_submit_agent_internal_duration_ns);
+    writer_.pid_info_timing(msg.pid, msg.bpf_probe_duration_ns, msg.perf_submit_agent_internal_duration_ns);
+    LOG::info("BufferedPoller::{}: sent pid_info_timing msg to server", __func__);
 }
 
 void BufferedPoller::handle_pid_info(message_metadata const &metadata,

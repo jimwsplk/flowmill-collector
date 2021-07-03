@@ -76,6 +76,9 @@ public:
   void on_new_process(std::chrono::nanoseconds timestamp,
                       struct jb_agent_internal__pid_info const &msg);
 
+  void on_new_process_timing(std::chrono::nanoseconds timestamp,
+                      struct jb_agent_internal__pid_info_timing const &msg);
+
   void on_process_end(std::chrono::nanoseconds timestamp,
                       struct jb_agent_internal__pid_close const &msg);
 
